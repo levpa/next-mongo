@@ -42,5 +42,4 @@ stages:
         - script: |
             echo " Build whole codebase for production: "
             npm run build
-- stage: deploy to AWS
-  displayName: deploy to the environment
+            
