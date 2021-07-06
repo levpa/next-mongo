@@ -7,6 +7,9 @@ trigger:
     exclude:
     - releases/old*
 
+variables:
+    MONGODB_URI: $(connURI)
+    MONGODB_DB: $(dbName)
 
 # variables: 
 #   Service connection as configured in project settings
@@ -26,11 +29,6 @@ stages:
       inputs:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
-      # map secrets to .env space
-    - bash: |
-        env:
-          MONGODB_URI: $(MONGODB_URI)
-          MONGODB_DB: $(MONGODB_DB)
     - script: |
         npm install
       displayName: 'install all dependencies'
