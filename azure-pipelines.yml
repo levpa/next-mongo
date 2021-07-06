@@ -1,5 +1,11 @@
+# specific branch build
 trigger:
-- master
+  branches:
+    include:
+    - master
+    - releases/*
+    exclude:
+    - releases/old*
 
 # variables: 
 #   Service connection as configured in project settings
