@@ -1,42 +1,37 @@
-# trigger all activity on main branch 
 trigger:
-- main
+- master
 
-pool:
-  vmImage: ubuntu-latest
+pr: none
+
+variables: 
+  # Service connection as configured in project settings
+  prodConnection: 'isabelProd'
+  prodApp: 'isabelProd'
 
 stages:
-# linting all codebase in project 
-- stage: lint
-  displayName: Lint with EsLint
-  jobs:
-  - job: lint
-    displayName: lint all codebase
-    steps:
-    - script: |
-        npm install --only=dev
-        npm run lint
-
-# doing all tests in project
-- stage: test
-  displayName: Test with Jest
-  dependsOn: []
-  jobs:
-  - job: test
-    displayName: test all codebase
-    steps:
-    - script: |
-        npm install --only=dev
-        npm run test
-
-# build all source code when checked
 - stage: build
-  displayName: Build whole codebase
-  dependsOn: [ test, lint ]
+  displayName: 'Build'
   jobs:
-    - job: builder
-      steps:
-        - script: |
-            echo " Build whole codebase for production: "
-            npm install --only=prod
-            npm run build
+  - job: build_test
+    displayName: 'Build and test'
+    pool:
+      vmImage: 'Ubuntu-20.04'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
+      displayName: 'Install Node.js'
+    - script: |
+        npm install
+        npm run lint
+        npm run test
+        npm run build
+      displayName: 'npm install, build, lint, and test'
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+        includeRootFolder: false
+    - task: PublishPipelineArtifact@0
+      inputs:
+        targetPath: '$(System.ArtifactsDirectory)'
+        
