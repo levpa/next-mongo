@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { connectToDatabase } from '../util/mongodb'
 
 
@@ -67,7 +66,7 @@ export default function Home({ isConnected }) {
           rel="noopener noreferrer"
         >
           Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" className="logo" />
+          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
         </a>
       </footer>
 
