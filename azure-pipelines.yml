@@ -13,6 +13,10 @@ stages:
   - job: lint
     displayName: lint all codebase
     steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
+        checkLatest: true
     - script: |
         npm install --only=dev
         npm run lint
@@ -25,6 +29,10 @@ stages:
   - job: test
     displayName: test all codebase
     steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
+        checkLatest: true
     - script: |
         npm install --only=dev
         npm run test
@@ -36,6 +44,10 @@ stages:
   jobs:
     - job: builder
       steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: '14.x'
+            checkLatest: true
         - script: |
             echo " Build whole codebase for production: "
             npm install --only=prod
