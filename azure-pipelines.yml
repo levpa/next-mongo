@@ -1,21 +1,46 @@
-# Node.js with React
-# Build a Node.js project that uses React.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
+# trigger all activity on main branch 
 trigger:
 - main
-
+# use Microsoft-hosted agent from the Azure Pipelines
 pool:
-  vmImage: ubuntu-latest
+  vmImage: ubuntu-20.04
+# multistage pipeline
+# install all runtime and dependencies
+stages:
+- stage: install
+  displayName: Install dependencies
+  jobs: 
+  - job: install
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
+      displayName: 'Install Node runtime 14.x LTS'
+    - script: |
+        echo " Install all dependencies: "
+        npm install
+# linting and testing project 
+- stage: test
+  displayName: Lint with EsLint and test with Jest
+  dependsOn: install
+  jobs:
+  - job: lint
+    displayName: lint all codebase
+    steps:
+    - script: npm run lint
+  - job: test
+    displayName: test all codebase
+    steps:
+    - script: npm run test
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '14.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+- stage: build
+  displayName: Bild whole codebase
+  dependsOn: test
+  jobs:
+    - job: builder
+      steps:
+        - script: |
+            echo " Build whole codebase for production: "
+            npm run build
+- stage: deploy to AWS
+  displayName: deploy to the environment
