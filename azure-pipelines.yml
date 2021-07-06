@@ -28,6 +28,11 @@ stages:
     - script: |
         npm install
       displayName: 'install all dependencies'
+    - script |
+        env:
+          MONGODB_URI: $(MONGODB_URI)
+          MONGODB_DB: $(MONGODB_DB)
+      displayName: 'Map Secrets'
     - script: |
         npm run lint
       displayName: 'Linting source code'
