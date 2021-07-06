@@ -1,5 +1,7 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import { connectToDatabase } from '../util/mongodb'
+
 
 export default function Home({ isConnected }) {
   return (
@@ -65,7 +67,7 @@ export default function Home({ isConnected }) {
           rel="noopener noreferrer"
         >
           Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
+          <Image src="/vercel.svg" alt="Vercel Logo" className="logo" />
         </a>
       </footer>
 
@@ -222,7 +224,7 @@ export default function Home({ isConnected }) {
   )
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const { client } = await connectToDatabase()
 
   const isConnected = await client.isConnected()

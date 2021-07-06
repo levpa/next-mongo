@@ -1,5 +1,5 @@
 import { connectToDatabase } from "../../util/mongodb";
-export default async (req, res) => {
+export default async (_req, res) => {
     const { db } = await connectToDatabase();
     const movies = await db
         .collection("movies")
