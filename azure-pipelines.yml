@@ -7,10 +7,6 @@ trigger:
     exclude:
     - releases/old*
 
-variables:
-    URI: $(connURI)
-    DB: $(dbName)
-
 # variables: 
 #   Service connection as configured in project settings
 #   prodConnection: 'levsProd'
@@ -29,6 +25,11 @@ stages:
       inputs:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
+    - bash: |
+        echo "Map secret variables to env"
+      env:
+        MONGODB_URI: $(connURI)
+        MONGODB_DB: $(dbName)
     - script: |
         npm install
       displayName: 'install all dependencies'
