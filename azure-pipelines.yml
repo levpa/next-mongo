@@ -2,13 +2,15 @@
 trigger:
 - main
 
+pool:
+  vmImage: ubuntu-latest
+
 stages:
 # linting all codebase in project 
 - stage: lint
   displayName: Lint with EsLint
   jobs:
   - job: lint
-    pool: ubuntu-latest
     displayName: lint all codebase
     steps:
     - script: |
@@ -21,7 +23,6 @@ stages:
   dependsOn: []
   jobs:
   - job: test
-    pool: ubuntu-latest
     displayName: test all codebase
     steps:
     - script: |
@@ -34,10 +35,8 @@ stages:
   dependsOn: [ test, lint ]
   jobs:
     - job: builder
-      pool: ubuntu-latest
       steps:
         - script: |
             echo " Build whole codebase for production: "
-            npm install
+            npm install --only=prod
             npm run build
-            
