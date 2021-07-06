@@ -8,8 +8,8 @@ trigger:
     - releases/old*
 
 variables:
-    MONGODB_URI: $(connURI)
-    MONGODB_DB: $(dbName)
+    URI: $(connURI)
+    DB: $(dbName)
 
 # variables: 
 #   Service connection as configured in project settings
