@@ -1,12 +1,10 @@
 trigger:
 - master
 
-pr: none
-
-variables: 
-  # Service connection as configured in project settings
-  prodConnection: 'isabelProd'
-  prodApp: 'isabelProd'
+# variables: 
+#   Service connection as configured in project settings
+#   prodConnection: 'levsProd'
+#   prodApp: 'levsProd'
 
 stages:
 - stage: build
@@ -23,15 +21,43 @@ stages:
       displayName: 'Install Node.js'
     - script: |
         npm install
+      displayName: 'install all dependencies'
+    - script: |
         npm run lint
+      displayName: 'Linting source code'
+    - script: |
         npm run test
+      displayName: 'Run tests for source code:'
+    - script: |
         npm run build
-      displayName: 'npm install, build, lint, and test'
+      displayName: 'Run production build'
     - task: ArchiveFiles@2
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
         includeRootFolder: false
+      displayName: 'Archive all files from build'
     - task: PublishPipelineArtifact@0
       inputs:
         targetPath: '$(System.ArtifactsDirectory)'
-        
+      displayName: 'Publish artifacts: drop'
+# - stage: prod
+#   displayName: 'Prod'
+#   dependsOn: build
+#   jobs:
+#   - deployment: deployProd
+#     displayName: 'Deploy prod'
+#     environment: levsProdEnv
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: DownloadPipelineArtifact@1
+#             inputs:
+#               downloadPath: '$(System.DefaultWorkingDirectory)'
+#           - task: AzureWebApp@1
+#             inputs:
+#               azureSubscription: $(prodConnection)
+#               appType: 'webAppLinux'
+#               appName: $(prodApp)
+#               runtimeStack: 'NODE|14.7'
+#               startUpCommand: 'npm run start'
