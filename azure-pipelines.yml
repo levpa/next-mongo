@@ -25,23 +25,19 @@ stages:
       inputs:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
-    - bash: |
-        echo "Map secret variables to env"
-      env:
-        MONGODB_URI: $(connURI)
-        MONGODB_DB: $(dbName)
     - script: |
-        echo "MONGODB_URI=$(connURI)">.env
-        echo "MONGODB_DB=$(dbName)">>.env
+        echo "MONGODB_URI=$(connURI)" > .env
+        echo "MONGODB_DB=$(dbName)" >> .env
+      displayName: 'map secrets to .env file'
     - script: |
         npm install
-      displayName: 'install all dependencies'
+      displayName: 'Install all dependencies'
     - script: |
         npm run lint
       displayName: 'Linting source code'
     - script: |
         npm run test
-      displayName: 'Run tests for source code:'
+      displayName: 'Run all tests'
     - script: |
         npm run build
       displayName: 'Run production build'
