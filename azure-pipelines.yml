@@ -1,45 +1,43 @@
 # trigger all activity on main branch 
 trigger:
 - main
-# use Microsoft-hosted agent from the Azure Pipelines
-pool:
-  vmImage: ubuntu-20.04
-# multistage pipeline
-# install all runtime and dependencies
+
 stages:
-- stage: install
-  displayName: Install dependencies
-  jobs: 
-  - job: install
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '14.x'
-      displayName: 'Install Node runtime 14.x LTS'
-    - script: |
-        echo " Install all dependencies: "
-        npm install
-# linting and testing project 
-- stage: test
-  displayName: Lint with EsLint and test with Jest
-  dependsOn: install
+# linting all codebase in project 
+- stage: lint
+  displayName: Lint with EsLint
   jobs:
   - job: lint
+    pool: ubuntu-latest
     displayName: lint all codebase
     steps:
-    - script: npm run lint
+    - script: |
+        npm install --only=dev
+        npm run lint
+
+# doing all tests in project
+- stage: test
+  displayName: Test with Jest
+  dependsOn: []
+  jobs:
   - job: test
+    pool: ubuntu-latest
     displayName: test all codebase
     steps:
-    - script: npm run test
+    - script: |
+        npm install --only=dev
+        npm run test
 
+# build all source code when checked
 - stage: build
-  displayName: Bild whole codebase
-  dependsOn: test
+  displayName: Build whole codebase
+  dependsOn: [ test, lint ]
   jobs:
     - job: builder
+      pool: ubuntu-latest
       steps:
         - script: |
             echo " Build whole codebase for production: "
+            npm install
             npm run build
             
