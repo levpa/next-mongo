@@ -7,6 +7,7 @@ trigger:
     exclude:
     - releases/old*
 
+
 # variables: 
 #   Service connection as configured in project settings
 #   prodConnection: 'levsProd'
@@ -25,14 +26,14 @@ stages:
       inputs:
         versionSpec: '14.x'
       displayName: 'Install Node.js'
-    - script: |
-        npm install
-      displayName: 'install all dependencies'
-    - script |
+      # map secrets to .env space
+    - bash: |
         env:
           MONGODB_URI: $(MONGODB_URI)
           MONGODB_DB: $(MONGODB_DB)
-      displayName: 'Map Secrets'
+    - script: |
+        npm install
+      displayName: 'install all dependencies'
     - script: |
         npm run lint
       displayName: 'Linting source code'
@@ -51,6 +52,7 @@ stages:
       inputs:
         targetPath: '$(System.ArtifactsDirectory)'
       displayName: 'Publish artifacts: drop'
+
 # - stage: prod
 #   displayName: 'Prod'
 #   dependsOn: build
